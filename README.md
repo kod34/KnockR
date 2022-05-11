@@ -37,29 +37,21 @@ chmod +x install.sh
 ## 🎈 Usage <a name="usage"></a>
 
 ```
-knockr [-h] [-p PASSWORD_SELECTOR] [-l USERNAME_SELECTOR]
-                 [-b LOGIN_BUTTON_SELECTOR] [-d DELAY] -s URL -u USERNAME -w
-                 WORDLIST -c CHROMEDRIVER
+knockr [-h] [-p PASSWORD_SELECTOR] [-l USERNAME_SELECTOR] [-b LOGIN_SELECTOR] [-d DELAY] -s URL -u
+              USERNAME -w WORDLIST -c CHROMEDRIVER
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  -p PASSWORD_SELECTOR, --pasel PASSWORD_SELECTOR
-                        Specify the password selector
-  -l USERNAME_SELECTOR, --usrsel USERNAME_SELECTOR
-                        Specify the username selector
-  -b LOGIN_BUTTON_SELECTOR, --buttonsel LOGIN_BUTTON_SELECTOR
-                        Specify the login button selector
-  -d DELAY, --delay DELAY
-                        Specify a delay
+  -p PASSWORD_SELECTOR  Specify the password selector
+  -l USERNAME_SELECTOR  Specify the username selector
+  -b LOGIN_SELECTOR     Specify the login button selector
+  -d DELAY              Specify a delay
 
 required named arguments:
-  -s URL, --url URL     Specify a url
-  -u USERNAME, --username USERNAME
-                        Specify the username
-  -w WORDLIST, --wordlist WORDLIST
-                        Specify the password list directory
-  -c CHROMEDRIVER, --chromedriver CHROMEDRIVER
-                        Specify the path to chrome driver
+  -s URL                Specify a url
+  -u USERNAME           Specify the username
+  -w WORDLIST           Specify the password list directory
+  -c CHROMEDRIVER       Specify the path to chrome driver
 
 ```
 

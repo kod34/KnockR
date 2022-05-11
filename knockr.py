@@ -40,15 +40,15 @@ class color:
 
 # Arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("-p", "--pasel", dest="password_selector",help="Specify the password selector")
-parser.add_argument("-l", "--usrsel", dest="username_selector",help="Specify the username selector")
-parser.add_argument("-b", "--buttonsel", dest="login_button_selector",help= "Specify the login button selector")
-parser.add_argument("-d", "--delay", dest="delay",help="Specify a delay")
+parser.add_argument("-p", dest="password_selector",help="Specify the password selector")
+parser.add_argument("-l", dest="username_selector",help="Specify the username selector")
+parser.add_argument("-b", dest="login_selector",help= "Specify the login button selector")
+parser.add_argument("-d", dest="delay",help="Specify a delay")
 requiredNamed = parser.add_argument_group('required named arguments')
-requiredNamed.add_argument("-s", "--url", dest="url",help="Specify a url", required=True)
-requiredNamed.add_argument("-u", "--username", dest="username",help="Specify the username", required=True)
-requiredNamed.add_argument("-w", "--wordlist", dest="wordlist",help="Specify the password list directory", required=True)
-requiredNamed.add_argument("-c", "--chromedriver", dest="chromedriver",help="Specify the path to chrome driver", required=True)
+requiredNamed.add_argument("-s", dest="url",help="Specify a url",required=True)
+requiredNamed.add_argument("-u", dest="username",help="Specify the username",required=True)
+requiredNamed.add_argument("-w", dest="wordlist",help="Specify the password list directory",required=True)
+requiredNamed.add_argument("-c", dest="chromedriver",help="Specify the path to chrome driver",required=True)
 
 args = parser.parse_args()
 
