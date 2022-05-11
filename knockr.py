@@ -143,7 +143,7 @@ banner()
 username = args.username
 usr_sel = args.username_selector
 pass_sel = args.password_selector
-button_sel = args.login_button_selector
+button_sel = args.login_selector
 url = args.url
 word_list = args.wordlist
 chromedriver = args.chromedriver
