@@ -150,7 +150,7 @@ chromedriver = args.chromedriver
 delay = args.delay
 
 if usr_sel == None:
-    usr_sel = input('Uername selector: '+color.END)
+    usr_sel = input('Username selector: '+color.END)
 if pass_sel == None:    
     pass_sel = input('Password selector: '+color.END)
 if button_sel == None:
