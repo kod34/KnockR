@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys
-import selenium
 import requests
 import time
 import os
@@ -19,7 +18,6 @@ button_sel = None
 word_list = None 
 url = None
 delay = None
-
 gotit = False
 
 #Colors
