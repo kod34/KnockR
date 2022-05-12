@@ -81,6 +81,7 @@ def brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay):
     optionss = webdriver.ChromeOptions()
     optionss.add_argument("--disable-popup-blocking")
     optionss.add_argument("--disable-extensions")
+    optionss.add_argument("--incognito")
     driver = webdriver.Chrome(service = Service(chromedriver))
     print (color.GREEN+'\n[*] Starting dictionary attack against '+color.YELLOW+username+color.GREEN+' with a '+color.YELLOW+delay+color.GREEN+' seconds delay'+color.END)
     with open(word_list, 'r') as f:
@@ -96,12 +97,12 @@ def brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay):
                 time.sleep(int(delay))
                 final_pass = passwd
                 if not driver.find_element(By.CSS_SELECTOR, usr_sel).is_displayed():
-                    sys.exit(color.GREEN+'\nPossible Password found: '+color.RED+final_pass+color.END+'\n[!] It\'s possible that there was a timeout and the password found is not the correct one.')
+                    sys.exit(color.GREEN+'\nPossible Password found: '+color.RED+final_pass+color.RED+'\n[!] It\'s possible that there was a timeout and the password found is not the correct one.'+color.END)
             except NoSuchElementException:
                 if final_pass == None:
                     sys.exit(color.RED+'\n[+] An error occured'+color.END)
                 else:
-                    sys.exit(color.GREEN+'\nPossible Password found: '+color.RED+final_pass+color.END+'\n[!] It\'s possible that there was a timeout and the password found is not the correct one.')
+                    sys.exit(color.GREEN+'\nPossible Password found: '+color.RED+final_pass+color.RED+'\n[!] It\'s possible that there was a timeout and the password found is not the correct one.'+color.END)
             except KeyboardInterrupt:
                 sys.exit(color.RED+'\n[!] User interrupt'+color.END)
     sys.exit(color.RED+'\n[-] Password not found'+color.END)
