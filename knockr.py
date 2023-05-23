@@ -9,6 +9,9 @@ from selenium.common.exceptions import NoSuchElementException
 import argparse
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 # Initiation
 username = None
@@ -41,18 +44,18 @@ parser.add_argument("-p", dest="password_selector",help="Specify the password se
 parser.add_argument("-l", dest="username_selector",help="Specify the username selector")
 parser.add_argument("-b", dest="login_selector",help= "Specify the login button selector")
 parser.add_argument("-d", dest="delay",help="Specify a delay")
+parser.add_argument("-c", dest="chromedriver",help="Specify the path to chrome driver", default="/tmp/chromedriver")
 requiredNamed = parser.add_argument_group('required named arguments')
 requiredNamed.add_argument("-s", dest="url",help="Specify a url",required=True)
 requiredNamed.add_argument("-u", dest="username",help="Specify the username",required=True)
 requiredNamed.add_argument("-w", dest="wordlist",help="Specify the password list directory",required=True)
-requiredNamed.add_argument("-c", dest="chromedriver",help="Specify the path to chrome driver",required=True)
 
 args = parser.parse_args()
 
 def get_request():
     global gotit
     try:
-        request_1 = requests.get(url)
+        request_1 = requests.get(url, verify = False)
         gotit = True
         return request_1
     except:
@@ -133,6 +136,8 @@ if not os.access(word_list, os.R_OK):
     sys.exit(color.RED+'\n[-] Please give your wordlist reading permissions'+color.END)
         
 chromedriver = args.chromedriver
+
+
 if not os.path.exists(chromedriver):
     sys.exit(color.RED+'\n[-] Invalid chromedriver path'+color.END)
 delay = args.delay
