@@ -101,9 +101,9 @@ def brutes(username, usr_sel ,pass_sel,button_sel,word_list, url, delay):
                 final_pass = passwd
                 if not driver.find_element(By.CSS_SELECTOR, usr_sel).is_displayed():
                     sys.exit(color.GREEN+'\nPossible Password found: '+color.RED+final_pass+color.RED+'\n[!] It\'s possible that there was a timeout and the password found is not the correct one.'+color.END)
-            except NoSuchElementException:
+            except NoSuchElementException as E:
                 if final_pass == None:
-                    sys.exit(color.RED+'\n[+] An error occured'+color.END)
+                    sys.exit(color.RED+f'\n[+] An error occured: [ {E} ]'+color.END)
                 else:
                     sys.exit(color.GREEN+'\nPossible Password found: '+color.RED+final_pass+color.RED+'\n[!] It\'s possible that there was a timeout and the password found is not the correct one.'+color.END)
             except KeyboardInterrupt:
